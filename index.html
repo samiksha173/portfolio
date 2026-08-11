@@ -136,7 +136,16 @@
   .imp-as{ color:#C792EA; }
   .imp-name{ color:var(--accent); }
   .import-block .cm{ color:var(--muted); }
-  .import-block div{ white-space:pre; margin-bottom:2px; }
+  .import-block div{ white-space:pre-wrap; margin-bottom:2px; word-break:break-word; }
+
+  /* Prevent horizontal overflow on small screens: allow card content to shrink and wrap */
+  .cell, .proj-card, .proj-body, .fact, .contact-card, .proj-file, .commit { min-width:0; }
+  .proj-desc, .out-desc, .about-text, .commit-meta, .commit-msg, .contact-card .v, .proj-file, .proj-body, .import-block div {
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    hyphens:auto;
+    white-space:normal;
+  }
 
   /* ---- PROJECTS AS FILE CARDS ---- */
   .proj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -228,10 +237,13 @@
       display:flex; position:fixed; top:62px; left:0; right:0; bottom:0;
       background:rgba(11,14,20,0.88); backdrop-filter:blur(6px);
       border-top:1px solid rgba(255,255,255,0.02); flex-direction:column;
-      padding:28px 20px; gap:18px; z-index:60; align-items:center; justify-content:flex-start;
+      padding:20px 16px; gap:18px; z-index:60; align-items:center; justify-content:flex-start;
+      max-height: calc(100vh - 62px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       animation:navDrop .18s ease-out;
     }
-    .navlinks.open a{ padding:14px 18px; font-size:18px; color:var(--text); background:transparent; border-radius:8px; width:100%; max-width:540px; text-align:center; }
+    .navlinks.open a{ padding:14px 18px; font-size:18px; color:var(--text); background:transparent; border-radius:8px; width:100%; max-width:540px; text-align:center; display:block; }
     @keyframes navDrop{ from{ transform:translateY(-6px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
   }
   @media (max-width:760px){
