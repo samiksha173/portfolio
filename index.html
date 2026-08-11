@@ -52,8 +52,8 @@
   .navlinks a{ transition:color .15s; position:relative; padding:8px 10px; border-radius:6px; }
   .navlinks a:hover{ color:var(--accent); background:rgba(197,156,255,0.04); }
   .mobile-toggle{
-    display:none; background:transparent; border:1px solid transparent; padding:8px; border-radius:8px; cursor:pointer;
-    color:var(--muted); font-family:var(--mono);
+    display:none; background:transparent; border:1px solid rgba(255,255,255,0.03); padding:10px 12px; border-radius:10px; cursor:pointer;
+    color:var(--muted); font-family:var(--mono); font-size:18px; line-height:1; transition:background .12s, color .12s, transform .12s;
   }
   .mobile-toggle:focus{ outline:2px solid rgba(197,156,255,0.18); }
   .navlinks a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
@@ -224,8 +224,15 @@
     .stats-row{ flex-direction:column; gap:16px; }
     .mobile-toggle{ display:block; }
     .navlinks{ display:none; }
-    .navlinks.open{ display:flex; position:fixed; top:62px; left:12px; right:12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; flex-direction:column; padding:12px; gap:8px; z-index:60; box-shadow:0 14px 40px rgba(0,0,0,0.5); }
-    .navlinks.open a{ padding:12px; }
+    .navlinks.open{
+      display:flex; position:fixed; top:62px; left:0; right:0; bottom:0;
+      background:rgba(11,14,20,0.88); backdrop-filter:blur(6px);
+      border-top:1px solid rgba(255,255,255,0.02); flex-direction:column;
+      padding:28px 20px; gap:18px; z-index:60; align-items:center; justify-content:flex-start;
+      animation:navDrop .18s ease-out;
+    }
+    .navlinks.open a{ padding:14px 18px; font-size:18px; color:var(--text); background:transparent; border-radius:8px; width:100%; max-width:540px; text-align:center; }
+    @keyframes navDrop{ from{ transform:translateY(-6px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
   }
   @media (max-width:760px){
     .facts{ grid-template-columns:1fr 1fr; }
@@ -237,7 +244,7 @@
   }
   @media (max-width:640px){
     .facts{ grid-template-columns:1fr; }
-    .navlinks{ display:flex; flex-wrap:wrap; justify-content:center; gap:12px; font-size:12px; }
+    .navlinks{ flex-wrap:wrap; justify-content:center; gap:12px; font-size:12px; }
     .out-name{ font-size:28px; }
     .hero-links{ justify-content:center; }
     .hero-photo{ width:160px; }
@@ -299,6 +306,14 @@ function Reveal({ children }){
 
 function Nav(){
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const onKey = (e) => { if(e.key === 'Escape') setOpen(false); };
+    if(open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [open]);
+
   return (
     <nav>
       <div className="wrap">
@@ -312,15 +327,15 @@ function Nav(){
             aria-expanded={open}
             onClick={() => setOpen(!open)}
           >
-            {open ? '✕' : '☰'}
+            <span aria-hidden>{open ? '✕' : '☰'}</span>
           </button>
-          <div className={"navlinks" + (open ? " open" : "")} onClick={() => setOpen(false)}>
-            <a href="#about">about</a>
-            <a href="#skills">skills</a>
-            <a href="#projects">projects</a>
-            <a href="#education">education</a>
-            <a href="#github">github</a>
-            <a href="#contact">contact</a>
+          <div className={"navlinks" + (open ? " open" : "")} onClick={(e) => { if(e.target === e.currentTarget) setOpen(false); }}>
+            <a href="#about" onClick={() => setOpen(false)}>about</a>
+            <a href="#skills" onClick={() => setOpen(false)}>skills</a>
+            <a href="#projects" onClick={() => setOpen(false)}>projects</a>
+            <a href="#education" onClick={() => setOpen(false)}>education</a>
+            <a href="#github" onClick={() => setOpen(false)}>github</a>
+            <a href="#contact" onClick={() => setOpen(false)}>contact</a>
           </div>
         </div>
       </div>
