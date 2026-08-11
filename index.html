@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Samiksha Tarte — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  :root{
+    --bg: #0B1220;
+    --surface: #11182b;
+    --surface-2: #1a263c;
+    --border: #2f2b4b;
+    --text: #E7ECEF;
+    --muted: #9FA8C2;
+    --accent: #C59CFF;
+    --accent-dark: #9B7BDB;
+    --blue: #8A9BE0;
+    --green: #6cc7c1;
+    --amber: #D9A25D;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Inter', 'Public Sans', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:rgba(197,156,255,0.35); color:#0B0E14; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:980px; margin:0 auto; padding:0 28px; }
+
+  /* ---- NAV ---- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(11,14,20,0.85);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:60px; }
+  .brand{ font-family:var(--mono); font-weight:600; font-size:15px; color:var(--text); }
+  .brand span{ color:var(--accent); }
+  .navlinks{ display:flex; gap:26px; font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .navlinks a{ transition:color .15s; position:relative; }
+  .navlinks a:hover{ color:var(--accent); }
+  .navlinks a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
+
+  /* ---- HERO / TERMINAL ---- */
+  header.hero{ padding:90px 0 70px; }
+  .termwin{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  .termbar{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 14px; background:var(--surface-2);
+    border-bottom:1px solid var(--border);
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.r{ background:#FF5F57; } .dot.y{ background:#FEBC2E; } .dot.g{ background:#28C840; }
+  .termtitle{ margin-left:8px; font-family:var(--mono); font-size:12px; color:var(--muted); }
+  .termbody{ padding:26px 24px 30px; font-family:var(--mono); font-size:14.5px; }
+  .termline{ color:var(--muted); margin-bottom:6px; }
+  .termline .prompt{ color:var(--accent); }
+  .termline .cmd{ color:var(--text); }
+  .out-name{ font-size:36px; font-weight:700; color:var(--text); margin:10px 0 4px; font-family:var(--sans); }
+  .out-role{ color:var(--accent); font-size:17px; margin-bottom:14px; }
+  .caret{ display:inline-block; width:9px; height:18px; background:var(--accent); margin-left:4px; animation:blink 1s steps(1) infinite; vertical-align:-3px;}
+  @keyframes blink{ 50%{ opacity:0; } }
+  .out-desc{ color:var(--muted); max-width:520px; margin-bottom:22px; font-family:var(--sans); font-size:15px;}
+  .hero-cta{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:10px 18px; border-radius:6px;
+    border:1px solid var(--border); transition:.15s; cursor:pointer;
+  }
+  .btn-primary{ background:var(--accent); color:#0B0E14; border-color:var(--accent); font-weight:600; }
+  .btn-primary:hover{ background:var(--accent-dark); }
+  .btn-ghost{ color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  .hero-links{ display:flex; gap:18px; font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .hero-links a:hover{ color:var(--accent); }
+  .hero-body-grid{ display:grid; grid-template-columns:1fr 220px; gap:20px; align-items:start; }
+  .hero-avatar{ display:flex; justify-content:center; align-items:center; padding-top:8px; }
+  .hero-photo{ width:220px; aspect-ratio:1 / 1; object-fit:cover; border-radius:22px; border:1px solid rgba(197,156,255,0.18); box-shadow:0 20px 40px rgba(0,0,0,0.22); }
+
+  @media (max-width:900px){ .hero-body-grid{ grid-template-columns:1fr; } .hero-photo{ width:180px; margin:0 auto; } }
+
+  /* ---- SECTION / CELL FRAMEWORK ---- */
+  section{ padding:64px 0; border-top:1px solid var(--border); }
+  .cell{
+    display:grid; grid-template-columns:64px 1fr; gap:0;
+  }
+  .cell-marker{
+    font-family:var(--mono); font-size:12.5px; padding-top:2px;
+  }
+  .cell-marker .in{ color:var(--accent); }
+  .cell-marker .out{ color:var(--accent-dark); margin-top:18px; }
+  .cell-head{ font-family:var(--mono); font-size:13px; color:var(--muted); margin-bottom:6px; }
+  h2.sec-title{
+    font-family:var(--sans); font-size:26px; font-weight:800; color:var(--text); margin-bottom:18px;
+    letter-spacing:-0.01em;
+  }
+  .sec-title .tag{ color:var(--amber); }
+
+  /* ---- ABOUT ---- */
+  .about-text{ color:var(--muted); max-width:640px; font-size:15.5px; }
+  .about-text strong{ color:var(--text); font-weight:600; }
+  .facts{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px; max-width:640px; }
+  .fact{ background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+  .fact .k{ font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .fact .v{ font-size:14.5px; margin-top:4px; color:var(--text); font-weight:600; }
+
+  /* ---- SKILLS AS IMPORTS ---- */
+  .import-block{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:20px 22px; font-family:var(--mono); font-size:14px; overflow-x:auto;
+  }
+  .imp-kw{ color:#C792EA; }
+  .imp-mod{ color:var(--amber); }
+  .imp-as{ color:#C792EA; }
+  .imp-name{ color:var(--accent); }
+  .import-block .cm{ color:var(--muted); }
+  .import-block div{ white-space:pre; margin-bottom:2px; }
+
+  /* ---- PROJECTS AS FILE CARDS ---- */
+  .proj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:680px){ .proj-grid{ grid-template-columns:1fr; } }
+  .proj-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    overflow:hidden; transition:transform .18s, border-color .18s;
+  }
+  .proj-card:hover{ transform:translateY(-3px); border-color:var(--accent); }
+  .proj-file{
+    display:flex; align-items:center; gap:8px; padding:10px 14px;
+    background:var(--surface-2); border-bottom:1px solid var(--border);
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+  }
+  .proj-file .ext{ color:var(--amber); }
+  .proj-body{ padding:16px 16px 18px; }
+  .proj-name{ font-size:16px; font-weight:700; margin-bottom:6px; }
+  .proj-desc{ color:var(--muted); font-size:13.5px; margin-bottom:12px; min-height:38px;}
+  .proj-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .tag-pill{
+    font-family:var(--mono); font-size:11px; padding:3px 8px; border-radius:20px;
+    border:1px solid var(--border); color:var(--muted);
+  }
+  .proj-links{ display:flex; gap:16px; font-family:var(--mono); font-size:12.5px; }
+  .proj-links a{ color:var(--accent); }
+  .proj-links a:hover{ color:var(--accent-dark); }
+
+  /* ---- EDUCATION TIMELINE (git-log style) ---- */
+  .commit{ display:flex; gap:14px; padding:14px 0; border-bottom:1px dashed var(--border); }
+  .commit:last-child{ border-bottom:none; }
+  .commit-dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); margin-top:6px; flex-shrink:0; }
+  .commit-hash{ font-family:var(--mono); color:var(--amber); font-size:12px; }
+  .commit-msg{ font-weight:600; margin:2px 0; }
+  .commit-meta{ color:var(--muted); font-size:13px; }
+
+  /* ---- GITHUB ACTIVITY ---- */
+  .contrib{ display:grid; grid-template-columns:repeat(26,1fr); gap:3px; max-width:640px; }
+  .sq{ width:100%; padding-bottom:100%; border-radius:2px; background:var(--surface-2); }
+  .stats-row{ display:flex; gap:30px; margin-top:22px; flex-wrap:wrap; }
+  .stat{ font-family:var(--mono); }
+  .stat .num{ font-size:22px; font-weight:700; color:var(--accent); }
+  .stat .lbl{ font-size:12px; color:var(--muted); }
+
+  /* ---- CONTACT ---- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:18px;
+  }
+  .contact-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:20px 22px; transition:border-color .15s, transform .15s;
+    min-height:120px;
+  }
+  .contact-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .contact-card .k{ font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .contact-card .v{ margin-top:8px; font-weight:600; line-height:1.5; word-break:break-word; }
+  .contact-card .v a{ color:var(--accent); text-decoration:none; }
+  .contact-card .v a:hover{ color:var(--accent-dark); text-decoration:underline; }
+
+  footer{ padding:30px 0; text-align:center; color:var(--muted); font-family:var(--mono); font-size:12px; border-top:1px solid var(--border); }
+
+  .totop{
+    position:fixed; right:22px; bottom:22px; width:42px; height:42px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--border); color:var(--accent);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:40;
+    font-family:var(--mono); transition:.15s; opacity:0; pointer-events:none;
+  }
+  .totop.show{ opacity:1; pointer-events:auto; }
+  .totop:hover{ border-color:var(--accent); }
+
+  @media (prefers-reduced-motion: reduce){
+    .caret{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+  @media (max-width:900px){
+    .wrap{ padding:0 18px; }
+    .cell{ grid-template-columns:1fr; }
+    .hero-body-grid{ grid-template-columns:1fr; }
+    .hero-photo{ width:180px; margin:0 auto; }
+    .nav .wrap{ flex-wrap:wrap; }
+    .hero-links{ justify-content:flex-start; flex-wrap:wrap; gap:10px; }
+    .termsbody{ padding:20px 18px 24px; }
+    .proj-grid{ grid-template-columns:1fr; }
+    .stats-row{ flex-direction:column; gap:16px; }
+  }
+  @media (max-width:760px){
+    .facts{ grid-template-columns:1fr 1fr; }
+    .hero-cta{ flex-direction:column; align-items:flex-start; }
+    .btn{ width:100%; text-align:center; }
+    .contact-card{ min-height:auto; }
+    .commit{ flex-direction:column; gap:10px; }
+    .commit-dot{ margin-top:0; }
+  }
+  @media (max-width:640px){
+    .facts{ grid-template-columns:1fr; }
+    .navlinks{ display:flex; flex-wrap:wrap; justify-content:center; gap:12px; font-size:12px; }
+    .out-name{ font-size:28px; }
+    .hero-links{ justify-content:center; }
+    .hero-photo{ width:160px; }
+    .btn{ font-size:12px; padding:10px 16px; }
+    .proj-file{ font-size:12px; }
+    .proj-body{ padding:14px; }
+    .contact-grid{ gap:14px; }
+    footer{ padding:20px 0; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const PROJECTS = [
+  { file:"blockchain_demo", ext:".java", name:"Simple Blockchain Demo", desc:"Fundamental blockchain concepts — blocks, hashing, and chain validation.", tags:["Java","Blockchain"], repo:"https://github.com/samiksha173" },
+  { file:"blockchain_gui", ext:".java", name:"Simple Blockchain GUI", desc:"Graphical blockchain app built with Java to visualize core concepts.", tags:["Java","Blockchain"], repo:"https://github.com/samiksha173" },
+  { file:"titanic_models", ext:".ipynb", name:"Titanic Supervised Models", desc:"Implementing supervised learning models to predict survival on the Titanic dataset.", tags:["Python","Scikit-learn"], repo:"https://github.com/samiksha173" },
+  { file:"job_tracker", ext:".py", name:"Job Application Tracker", desc:"Full-stack web app with calendar-driven candidate management and JSON data workflows.", tags:["Python","Flask","JavaScript"], repo:"https://github.com/samiksha173" },
+  { file:"titanic_eda", ext:".ipynb", name:"Titanic Dataset", desc:"Exploratory data analysis and ML experiments on the Titanic dataset.", tags:["Python","Pandas","Matplotlib"], repo:"https://github.com/samiksha173" },
+  { file:"diabetes_predict", ext:".ipynb", name:"Diabetes Prediction", desc:"Predicting diabetes risk from patient health data using supervised learning.", tags:["Python","Machine Learning"], repo:"https://github.com/samiksha173" },
+  { file:"ad_sales", ext:".ipynb", name:"Advertising Sales", desc:"Data analysis and predictive modeling on advertising spend vs. sales.", tags:["Python","Pandas","ML"], repo:"https://github.com/samiksha173" },
+];
+
+const EDU = [
+  { hash:"a3f9c1e", msg:"B.Tech, Computer Science & Engineering", meta:"In progress · Focus: ML, Blockchain, Android" },
+  { hash:"7c02bd4", msg:"Started exploring Machine Learning", meta:"Scikit-learn, Pandas, NumPy projects" },
+  { hash:"f19e0aa", msg:"Started exploring Blockchain", meta:"Built core blockchain logic in Java" },
+];
+
+function useReveal(){
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if(!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      if(entry.isIntersecting){ setVisible(true); obs.disconnect(); }
+    }, { threshold: 0.15 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, visible];
+}
+
+function Reveal({ children }){
+  const [ref, visible] = useReveal();
+  return (
+    <div ref={ref} style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0)" : "translateY(14px)",
+      transition: "opacity .5s ease, transform .5s ease"
+    }}>{children}</div>
+  );
+}
+
+function Nav(){
+  return (
+    <nav>
+      <div className="wrap">
+        <div className="brand">samiksha<span>.dev</span></div>
+        <div className="navlinks">
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+          <a href="#education">Education</a>
+          <a href="#github">GitHub</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function Hero(){
+  return (
+    <header className="hero">
+      <div className="wrap">
+        <div className="termwin">
+          <div className="termbar">
+            <div className="dot r"></div><div className="dot y"></div><div className="dot g"></div>
+            <div className="termtitle">samiksha@portfolio: ~</div>
+          </div>
+          <div className="termbody">
+            <div className="hero-body-grid">
+              <div>
+                <div className="out-name">Samiksha Sominath Tarte</div>
+                <div className="out-role">B.Tech CSE Student · Python · Java · Machine Learning </div>
+                <div className="out-desc">
+                  Detail-oriented Computer Science student with strong technical fundamentals in C++,
+                  Java, Python, Flask, SQL, and software testing. I have hands-on experience in
+                  full-stack web development, Android development, and data science applications.
+                  I combine academic excellence with collaborative problem-solving to build useful software.
+                </div>
+                <div className="hero-cta">
+                  <a className="btn btn-primary" href="#projects">View Projects</a>
+                  <a className="btn btn-ghost" href="resume.pdf" download="Samiksha_Tarte_Resume.pdf">Download Resume</a>
+                  <a className="btn btn-ghost" href="#contact">Contact Me</a>
+                </div>
+                <div className="hero-links">
+                  <a href="https://github.com/samiksha173" target="_blank" rel="noopener">GitHub ↗</a>
+                  <a href="https://www.linkedin.com/in/samiksha-tarte007" target="_blank" rel="noopener">LinkedIn ↗</a>
+                  <a href="mailto:tartesamiksha@gmail.com">Email ↗</a>
+                </div>
+              </div>
+              <div className="hero-avatar">
+                <img src="profile.jpg" alt="Samiksha Sominath tarte" className="hero-photo" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Cell({ n, out, title, tag, children }){
+  return (
+    <section id={title.toLowerCase()}>
+      <div className="wrap">
+        <Reveal>
+          <div className="cell">
+            <div className="cell-marker">
+              <div className="in"></div>
+            </div>
+            <div>
+              <h2 className="sec-title">{title}</h2>
+              {children}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function About(){
+  return (
+    <Cell n={1} title="About" tag="who_am_i()">
+      <p className="about-text">
+        I'm a <strong>Computer Science</strong> student with strong technical fundamentals and a
+        proven record of academic excellence. I have built full-stack web applications,
+        Android apps, and data science models using Java, Python, Flask, SQL, and modern tools.
+        I enjoy solving technical problems through software engineering best practices.
+      </p>
+      <div className="facts">
+        <div className="fact"><div className="k">Degree</div><div className="v">B.Tech, CSE (Expected 2028)</div></div>
+        <div className="fact"><div className="k">Diploma</div><div className="v">Computer Engineering — 91.65%</div></div>
+        <div className="fact"><div className="k">Specialty</div><div className="v">Web, Android, Data Science</div></div>
+      </div>
+    </Cell>
+  );
+}
+
+function Skills(){
+  return (
+    <Cell n={2} title="Skills">
+      <div className="facts" style={{maxWidth: '720px', marginTop: '18px'}}>
+        <div className="fact"><div className="k">Programming Languages</div><div className="v">C, C++, Java, Python, JavaScript</div></div>
+        <div className="fact"><div className="k">Web & Android Dev</div><div className="v">HTML, CSS, Flask, XML, Android Studio</div></div>
+        <div className="fact"><div className="k">Databases</div><div className="v">MySQL, Firebase, XAMPP</div></div>
+        <div className="fact"><div className="k">Developer Tools</div><div className="v">Git, GitHub, VS Code, Sublime Text, Postman</div></div>
+      </div>
+    </Cell>
+  );
+}
+
+function Projects(){
+  return (
+    <Cell n={3} title="Projects" tag="ls ./work">
+      <div className="proj-grid">
+        {PROJECTS.map((p, i) => (
+          <div className="proj-card" key={i}>
+            <div className="proj-file">📄 {p.file}<span className="ext">{p.ext}</span></div>
+            <div className="proj-body">
+              <div className="proj-name">{p.name}</div>
+              <div className="proj-desc">{p.desc}</div>
+              <div className="proj-tags">
+                {p.tags.map((t,j) => <span className="tag-pill" key={j}>{t}</span>)}
+              </div>
+              <div className="proj-links">
+                <a href={p.repo} target="_blank" rel="noopener">GitHub →</a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Cell>
+  );
+}
+
+function Education(){
+  return (
+    <Cell n={4} title="Education">
+      <div className="facts" style={{maxWidth: '720px', marginTop: '12px'}}>
+        <div className="fact"><div className="k">B.Tech in Computer Science & Engineering</div><div className="v">DIEMS College, Chh. Sambhajinagar — Expected Jun 2028 · CGPA: 7.44</div></div>
+        <div className="fact"><div className="k">Diploma in Computer Engineering</div><div className="v">Government Polytechnic College, Chh. Sambhajinagar — Completed Jun 2025 · Score: 91.65%</div></div>
+        <div className="fact"><div className="k">Secondary School Certificate (SSC)</div><div className="v">Z.P. High School, Jategaon — Completed Mar 2022 · Score: 92.80%</div></div>
+      </div>
+    </Cell>
+  );
+}
+
+const GOALS = [
+  "Strengthen Data Structures & Algorithms",
+  "Learn advanced Machine Learning",
+  "Explore Blockchain development further",
+  "Build more real-world applications",
+  "Improve web development skills",
+  "Contribute to open source",
+];
+
+function Goals(){
+  return (
+    <Cell n={5} title="Experience" tag="work.history">
+      <div className="import-block" style={{fontFamily:"var(--sans)"}}>
+        <div style={{marginBottom:"12px"}}>
+          <strong>Data Science Intern</strong> · Edufyfi Tech Solutions Pvt. Ltd · Nov 2025 - Jan 2026
+          <div style={{color:"var(--muted)", marginTop:"6px", fontSize:"14px"}}>
+            End-to-end data processing pipelines, machine learning implementation, and cross-functional
+            collaboration to optimize solution workflows.
+          </div>
+        </div>
+        <div>
+          <strong>Android Developer Intern</strong> · Mountreach Solution Pvt. Ltd · Jun 2024 - Jul 2024
+          <div style={{color:"var(--muted)", marginTop:"6px", fontSize:"14px"}}>
+            Developed UI layouts and Android app components, and used debugging best practices to
+            resolve issues during development cycles.
+          </div>
+        </div>
+      </div>
+    </Cell>
+  );
+}
+
+function GitHubActivity(){
+  const squares = Array.from({length: 26*7});
+  return (
+    <Cell n={6} title="GitHub" tag="contribution graph">
+      <div className="contrib">
+        {squares.map((_, i) => {
+          const r = Math.random();
+          const bg = r > 0.85 ? "var(--green)" : r > 0.7 ? "#2e6b3e" : "var(--surface-2)";
+          return <div className="sq" style={{background:bg}} key={i}></div>;
+        })}
+      </div>
+      <div className="stats-row">
+        <div className="stat"><div className="num">53+</div><div className="lbl">Contributions &amp; counting</div></div>
+        <div className="stat"><div className="num">6+</div><div className="lbl">Public Repos</div></div>
+        <div className="stat"><div className="num">3</div><div className="lbl">Domains: ML / Blockchain / Python</div></div>
+      </div>
+    </Cell>
+  );
+}
+
+function Contact(){
+  return (
+    <Cell n={7} title="Contact" tag="let's connect">
+      <div className="contact-grid">
+        <div className="contact-card"><div className="k">Location</div><div className="v">Chhatrapati Sambhajinagar, Maharashtra</div></div>
+        <div className="contact-card"><div className="k">Email</div><div className="v"><a href="mailto:tartesamiksha@gmail.com">tartesamiksha@gmail.com</a></div></div>
+        <div className="contact-card"><div className="k">LinkedIn</div><div className="v"><a href="https://www.linkedin.com/in/samiksha-tarte007" target="_blank" rel="noopener">linkedin.com/in/samiksha-tarte007</a></div></div>
+        <div className="contact-card"><div className="k">GitHub</div><div className="v"><a href="https://github.com/samiksha173" target="_blank" rel="noopener">github.com/samiksha173</a></div></div>
+      </div>
+    </Cell>
+  );
+}
+
+function ToTop(){
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 500);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div className={"totop" + (show ? " show" : "")} onClick={() => window.scrollTo({top:0, behavior:"smooth"})}>↑</div>
+  );
+}
+
+function App(){
+  return (
+    <React.Fragment>
+      <Nav />
+      <Hero />
+      <About />
+      <Skills />
+      <Projects />
+      <Education />
+      <Goals />
+      <GitHubActivity />
+      <Contact />
+      <footer>© {new Date().getFullYear()} Samiksha Sominath tarte</footer>
+      <ToTop />
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
