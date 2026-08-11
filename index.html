@@ -48,9 +48,14 @@
   nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:60px; }
   .brand{ font-family:var(--mono); font-weight:600; font-size:15px; color:var(--text); }
   .brand span{ color:var(--accent); }
-  .navlinks{ display:flex; gap:26px; font-family:var(--mono); font-size:13px; color:var(--muted); }
-  .navlinks a{ transition:color .15s; position:relative; }
-  .navlinks a:hover{ color:var(--accent); }
+  .navlinks{ display:flex; gap:26px; font-family:var(--mono); font-size:13px; color:var(--muted); align-items:center; }
+  .navlinks a{ transition:color .15s; position:relative; padding:8px 10px; border-radius:6px; }
+  .navlinks a:hover{ color:var(--accent); background:rgba(197,156,255,0.04); }
+  .mobile-toggle{
+    display:none; background:transparent; border:1px solid transparent; padding:8px; border-radius:8px; cursor:pointer;
+    color:var(--muted); font-family:var(--mono);
+  }
+  .mobile-toggle:focus{ outline:2px solid rgba(197,156,255,0.18); }
   .navlinks a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
 
   /* ---- HERO / TERMINAL ---- */
@@ -217,6 +222,10 @@
     .termsbody{ padding:20px 18px 24px; }
     .proj-grid{ grid-template-columns:1fr; }
     .stats-row{ flex-direction:column; gap:16px; }
+    .mobile-toggle{ display:block; }
+    .navlinks{ display:none; }
+    .navlinks.open{ display:flex; position:fixed; top:62px; left:12px; right:12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; flex-direction:column; padding:12px; gap:8px; z-index:60; box-shadow:0 14px 40px rgba(0,0,0,0.5); }
+    .navlinks.open a{ padding:12px; }
   }
   @media (max-width:760px){
     .facts{ grid-template-columns:1fr 1fr; }
@@ -289,17 +298,30 @@ function Reveal({ children }){
 }
 
 function Nav(){
+  const [open, setOpen] = useState(false);
   return (
     <nav>
       <div className="wrap">
-        <div className="brand">samiksha<span>.dev</span></div>
-        <div className="navlinks">
-          <a href="#about">About</a>
-          <a href="#skills">Skills</a>
-          <a href="#projects">Projects</a>
-          <a href="#education">Education</a>
-          <a href="#github">GitHub</a>
-          <a href="#contact">Contact</a>
+        <div style={{display:'flex', alignItems:'center', gap:12}}>
+          <div className="brand">samiksha<span>.dev</span></div>
+        </div>
+        <div style={{display:'flex', alignItems:'center', gap:12}}>
+          <button
+            className="mobile-toggle"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? '✕' : '☰'}
+          </button>
+          <div className={"navlinks" + (open ? " open" : "")} onClick={() => setOpen(false)}>
+            <a href="#about">about</a>
+            <a href="#skills">skills</a>
+            <a href="#projects">projects</a>
+            <a href="#education">education</a>
+            <a href="#github">github</a>
+            <a href="#contact">contact</a>
+          </div>
         </div>
       </div>
     </nav>
