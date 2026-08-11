@@ -57,6 +57,10 @@
   }
   .mobile-toggle:focus{ outline:2px solid rgba(197,156,255,0.18); }
   .navlinks a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
+  /* mobile overlay (separate from desktop navlinks) */
+  .mobile-overlay{ display:none; }
+  .mobile-overlay.open{ display:flex; position:fixed; top:62px; left:0; right:0; bottom:0; background:rgba(11,14,20,0.88); z-index:58; align-items:flex-start; justify-content:flex-start; padding:20px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .mobile-overlay.open a{ display:block; width:100%; max-width:540px; margin:8px auto; padding:14px 18px; font-size:18px; color:var(--text); text-align:center; border-radius:8px; }
 
   /* ---- HERO / TERMINAL ---- */
   header.hero{ padding:90px 0 70px; }
@@ -327,31 +331,42 @@ function Nav(){
   }, [open]);
 
   return (
-    <nav>
-      <div className="wrap">
-        <div style={{display:'flex', alignItems:'center', gap:12}}>
-          <div className="brand">samiksha<span>.dev</span></div>
-        </div>
-        <div style={{display:'flex', alignItems:'center', gap:12}}>
-          <button
-            className="mobile-toggle"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
-            <span aria-hidden>{open ? '✕' : '☰'}</span>
-          </button>
-          <div className={"navlinks" + (open ? " open" : "")} onClick={(e) => { if(e.target === e.currentTarget) setOpen(false); }}>
-            <a href="#about" onClick={() => setOpen(false)}>about</a>
-            <a href="#skills" onClick={() => setOpen(false)}>skills</a>
-            <a href="#projects" onClick={() => setOpen(false)}>projects</a>
-            <a href="#education" onClick={() => setOpen(false)}>education</a>
-            <a href="#github" onClick={() => setOpen(false)}>github</a>
-            <a href="#contact" onClick={() => setOpen(false)}>contact</a>
+    <>
+      <nav>
+        <div className="wrap">
+          <div style={{display:'flex', alignItems:'center', gap:12}}>
+            <div className="brand">samiksha<span>.dev</span></div>
+          </div>
+          <div style={{display:'flex', alignItems:'center', gap:12}}>
+            <button
+              className="mobile-toggle"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen(!open)}
+            >
+              <span aria-hidden>{open ? '✕' : '☰'}</span>
+            </button>
+            <div className={"navlinks"}>
+              <a href="#about">about</a>
+              <a href="#skills">skills</a>
+              <a href="#projects">projects</a>
+              <a href="#education">education</a>
+              <a href="#github">github</a>
+              <a href="#contact">contact</a>
+            </div>
           </div>
         </div>
+      </nav>
+
+      <div className={"mobile-overlay" + (open ? " open" : "")} onClick={(e) => { if(e.target === e.currentTarget) setOpen(false); }}>
+        <a href="#about" onClick={() => setOpen(false)}>about</a>
+        <a href="#skills" onClick={() => setOpen(false)}>skills</a>
+        <a href="#projects" onClick={() => setOpen(false)}>projects</a>
+        <a href="#education" onClick={() => setOpen(false)}>education</a>
+        <a href="#github" onClick={() => setOpen(false)}>github</a>
+        <a href="#contact" onClick={() => setOpen(false)}>contact</a>
       </div>
-    </nav>
+    </>
   );
 }
 
