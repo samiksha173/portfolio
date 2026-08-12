@@ -88,8 +88,19 @@
   .navlinks a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
   /* mobile overlay (separate from desktop navlinks) */
   .mobile-overlay{ display:none; }
-  .mobile-overlay.open{ display:flex; position:fixed; top:62px; left:0; right:0; bottom:0; background:rgba(11,14,20,0.88); z-index:58; align-items:flex-start; justify-content:flex-start; padding:20px 16px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-  .mobile-overlay.open a{ display:block; width:100%; max-width:540px; margin:8px auto; padding:14px 18px; font-size:18px; color:var(--text); text-align:center; border-radius:8px; }
+  .mobile-overlay.open{ display:flex; position:fixed; top:62px; left:0; right:0; bottom:0; background:rgba(11,14,20,0.96); backdrop-filter:blur(10px); z-index:58; align-items:flex-start; justify-content:flex-start; padding:24px 18px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .mobile-overlay.open::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(197,156,255,0.12), rgba(108,199,193,0.08));
+    pointer-events:none;
+  }
+  .mobile-overlay.open a{
+    display:block; width:100%; max-width:560px; margin:8px auto; padding:16px 18px; font-size:17px; color:var(--text); text-align:center; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); transition:transform .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .mobile-overlay.open a:hover{ transform:translateY(-1px); background:rgba(197,156,255,0.16); border-color:rgba(197,156,255,0.28); color:#fff; }
+  .mobile-overlay.open a:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
 
   /* ---- HERO / TERMINAL ---- */
   header.hero{ padding:90px 0 70px; }
